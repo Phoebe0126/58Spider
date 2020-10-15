@@ -1,6 +1,6 @@
 let express = require('express')
 let bodyParser = require('body-parser')
-
+let Controller = require('../controllers/rentInfo')
 
 module.exports = () => {
     let app = express()
@@ -11,6 +11,8 @@ module.exports = () => {
     app.use(bodyParser.json())
     // 路由
     require('../routes/index')(app)
+    // 爬虫解析
+    Controller.init()
 
     app.use((req, res) => {
         res.status(404);
