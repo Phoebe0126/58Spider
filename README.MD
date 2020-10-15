@@ -3,7 +3,7 @@
 ## How to run
 
 ```bash
-cd reptile
+cd 58Spider
 
 # install dependencies
 npm install

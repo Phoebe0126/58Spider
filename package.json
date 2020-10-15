@@ -1,0 +1,27 @@
+{
+  "name": "58spider",
+  "version": "1.0.0",
+  "description": "```bash\r cd 58Spider",
+  "main": "app.js",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "cheerio": "^1.0.0-rc.3",
+    "express": "^4.17.1",
+    "request": "^2.88.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "start": "node app",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Phoebe0126/58Spider.git"
+  },
+  "author": "phoebe",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Phoebe0126/58Spider/issues"
+  },
+  "homepage": "https://github.com/Phoebe0126/58Spider#readme"
+}
