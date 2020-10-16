@@ -1,14 +1,12 @@
 let request = require('request');
 let cheerio = require('cheerio');
-const { time } = require('console');
 let totalPage = require('../config/config').page;
+let RentModel = require('../models/rent')
 
 // todo 记得在app.js中初始化
 let cookie = ''
 // 存入url的数组
 let urlPipe = []
-// 存储房屋的信息
-let rentalInfosMap = new Map()
 // 访问次数
 let times = 0
 
@@ -19,7 +17,7 @@ let times = 0
  * @return {string} url
  */
 function getUrl (page = 1){
-	return  'https://hz.58.com/chuzu/pn' + page +'/?key=%E6%9D%AD%E5%B7%9E%E7%A7%9F%E6%88%BF%E5%AD%90&cmcskey=%E7%A7%9F%E6%88%BF%E5%AD%90&final=1&PGTID=0d3090a7-0004-f43c-ee04-95c2ea3d031f&ClickID=6';
+    return 'https://wh.58.com/chuzu/pn' + page +'/?PGTID=0d3090a7-0009-e83a-9946-fd47f2681520&ClickID=2'
 }
 
 /**
@@ -58,7 +56,7 @@ function getRentalInfo () {
  */
 function storeUrl (url) {
     // 筛选符合要求的url
-    if (!url.includes('hz.58.com')) {
+    if (!url.includes('wh.58.com')) {
         return
     }
     urlPipe.push(url)
@@ -66,7 +64,7 @@ function storeUrl (url) {
 
 /**
  * 用途：反爬虫策略解析url
- * @param {*} times 访问次数
+ * 
  */
 function accessUrlInfo () {
     // url数组为空
@@ -104,46 +102,37 @@ function analysis (url) {
 
         try {
             const descDom = $('div.house-word-introduce > .introduce-item li > span.a2')[1].children
+            let desc = ''
             if (descDom.length > 0) {
-                const desc = descDom.reduce((pre, cur) => pre +'<br />' + (cur.data || ''), '')
+                desc = descDom.reduce((pre, cur) => pre + (cur.data ? (cur.data + '<br/>') : ''), '')
             }
             // 获取相关信息
-            $('a.c_333') && $('a.c_333')['0']
-            && rentalInfosMap.set(url, {
-                // tel: $('span.tel-num.tel-font').text(),
-                // price: $('.house-price').text(),
-                desc,
-                location: $('a.c_333')[0].children[0].data,
-                img: $('#smainPic')['0'].attribs.src,
-            })
-            console.log(`get ${Array.from(rentalInfosMap).length} rental infos`)
+            if ($('a.c_333') && $('a.c_333')['0']) {
+                const data = {
+                    url,
+                    desc,
+                    location: $('a.c_333')[0].children[0].data,
+                    img: $('#smainPic')['0'].attribs.src,
+                }
+
+                // 存在数据库中
+                RentModel.create(data).then(result => {
+                    console.log(result)
+                })
+                .catch(err => {
+                    console.log(err)
+                }) 
+            }
+
         } catch (e) {
             console.log('get rental info error when ananlyze url', e)
         }
     })
 }
 
-/**
- * 用途：获取js对象形式的租房信息
- */
-function getFinalRentalInfo () {
-    let res = {}
-
-    for (let [key, value] of rentalInfosMap) {
-        res[key] = value
-    }
-
-    return res
-}
 
 module.exports = {
     init () {
         getRentalInfo()
-    },
-    getRentalInfos (req, res, next) {
-        res.json({
-            result: true,
-            params: getFinalRentalInfo()
-        })
     }
 }

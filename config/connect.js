@@ -1,8 +1,8 @@
 let mongoose = require('mongoose');
 let mongodb = require('./config').mongodb
 
-mongoose.Promise = global.promise
-mongoose.connect(mongodb);
+mongoose.Promise = global.Promise
+mongoose.connect(mongodb, {useNewUrlParser: true, useUnifiedTopology: true});
 mongoose.connection.on('connected', () => {
     console.log('mongoDB connected successfully')
 })
