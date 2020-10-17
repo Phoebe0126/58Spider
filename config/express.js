@@ -26,7 +26,7 @@ module.exports = () => {
     // 路由
     require('../routes/index')(app)
     // 爬虫解析
-    // Controller.init()
+    Controller.init()
 
     app.use((req, res) => {
         res.status(404);
